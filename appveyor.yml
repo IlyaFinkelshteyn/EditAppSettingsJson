@@ -1,0 +1,19 @@
+version: 1.0.{build}
+install:
+- ps: |
+    Write-host "Before" -foregroundcolor Green
+    type .\appsettings.json
+    Write-host "Editing" -foregroundcolor Green
+    
+    $appsettings = Get-Content .\appsettings.json | ConvertFrom-Json
+    $appsettings.option1 =  $env:APPVEYOR_BUILD_VERSION
+    $appsettings.option2 = $env:APPVEYOR_BUILD_NUMBER
+    $appsettings.subsection.suboption1 = $env:APPVEYOR_BUILD_VERSION
+    $appsettings.wizards[0].Name = $env:APPVEYOR_REPO_COMMIT_AUTHOR
+    $appsettings.wizards[0].Age = $env:APPVEYOR_PROJECT_ID
+    
+    $appsettings | ConvertTo-Json  | set-content '.\appsettings.json'
+
+    Write-host "After:" -foregroundcolor Green
+    type .\appsettings.json
+build: off
